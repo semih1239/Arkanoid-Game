@@ -36,13 +36,21 @@ function setGameWin(view: CanvasView) {
 function gameLoop(
     view: CanvasView,
     bricks: Brick[],
-    // paddle: Paddle,
+    paddle: Paddle,
     // ball: Ball,
 ) {
     view.clear();
     view.drawBricks(bricks);
 
-    requestAnimationFrame(() => gameLoop(view, bricks));
+    // Moce paddle and check so it won't exit the playfield
+    if (
+        (paddle.isMovingLeft && paddle.pos.x > 0) ||
+        (paddle.isMovingRight && paddle.pos.x < view.canvas.width - paddle.width)
+    ) {
+
+    }
+
+    requestAnimationFrame(() => gameLoop(view, bricks, paddle));
 }
 
 function startGame(view: CanvasView) {
@@ -52,8 +60,19 @@ function startGame(view: CanvasView) {
     view.drawScore(0);
     // Create all bricks
     const bricks = createBricks();
+    // Create a Paddle
+    const paddle = new Paddle(
+        PADDLE_SPEED,
+        PADDLE_WIDTH,
+        PADDLE_HEIGHT,
+        {
+            x: PADDLE_STARTX,
+            y: view.canvas.height - PADDLE_HEIGHT - 5
+        },
+        PADDLE_IMAGE
+    )
 
-    gameLoop(view, bricks);
+    gameLoop(view, bricks, paddle);
 }
 
 // Create a new view
